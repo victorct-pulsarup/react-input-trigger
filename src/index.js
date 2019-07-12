@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import getCaretCoordinates from 'textarea-caret';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import getCaretCoordinates from "textarea-caret";
 
 function getHookObject(type, element, startPoint) {
   const caret = getCaretCoordinates(element, element.selectionEnd);
@@ -12,8 +12,8 @@ function getHookObject(type, element, startPoint) {
       selectionEnd: element.selectionEnd,
       top: caret.top,
       left: caret.left,
-      height: caret.height,
-    },
+      height: caret.height
+    }
   };
 
   if (!startPoint) {
@@ -31,7 +31,7 @@ class InputTrigger extends Component {
 
     this.state = {
       triggered: false,
-      triggerStartPosition: null,
+      triggerStartPosition: null
     };
 
     this.handleTrigger = this.handleTrigger.bind(this);
@@ -44,58 +44,52 @@ class InputTrigger extends Component {
   }
 
   handleTrigger(event) {
-    const {
-      trigger,
-      onStart,
-      onCancel,
-      onType,
-    } = this.props;
+    const { trigger, onStart, onCancel, onType } = this.props;
 
-    const {
-      which,
-      shiftKey,
-      metaKey,
-      ctrlKey,
-      key
-    } = event;
+    const { which, shiftKey, metaKey, ctrlKey, key } = event;
 
     const { selectionStart } = event.target;
     const { triggered, triggerStartPosition } = this.state;
 
     if (!triggered) {
       if (
-        (key === trigger.key ||
-        which === trigger.keyCode) &&
+        (key === trigger.key || which === trigger.keyCode) &&
         shiftKey === !!trigger.shiftKey &&
         ctrlKey === !!trigger.ctrlKey &&
         metaKey === !!trigger.metaKey
       ) {
-        this.setState({
-          triggered: true,
-          triggerStartPosition: selectionStart + 1,
-        }, () => {
-          setTimeout(() => {
-            onStart(getHookObject('start', this.element));
-          }, 0);
-        });
+        this.setState(
+          {
+            triggered: true,
+            triggerStartPosition: selectionStart + 1
+          },
+          () => {
+            setTimeout(() => {
+              onStart(getHookObject("start", this.element));
+            }, 0);
+          }
+        );
         return null;
       }
     } else {
       if (which === 8 && selectionStart <= triggerStartPosition) {
-        this.setState({
-          triggered: false,
-          triggerStartPosition: null,
-        }, () => {
-          setTimeout(() => {
-            onCancel(getHookObject('cancel', this.element));
-          }, 0);
-        });
+        this.setState(
+          {
+            triggered: false,
+            triggerStartPosition: null
+          },
+          () => {
+            setTimeout(() => {
+              onCancel(getHookObject("cancel", this.element));
+            }, 0);
+          }
+        );
 
         return null;
       }
 
       setTimeout(() => {
-        onType(getHookObject('typing', this.element, triggerStartPosition));
+        onType(getHookObject("typing", this.element, triggerStartPosition));
       }, 0);
     }
 
@@ -105,7 +99,7 @@ class InputTrigger extends Component {
   resetState() {
     this.setState({
       triggered: false,
-      triggerStartPosition: null,
+      triggerStartPosition: null
     });
   }
 
@@ -128,24 +122,18 @@ class InputTrigger extends Component {
         onKeyDown={this.handleTrigger}
         {...rest}
       >
-        {
-          !elementRef
-            ? (
-              React.Children.map(this.props.children, child => (
-                React.cloneElement(child, {
-                  ref: (element) => {
-                    this.element = element;
-                    if (typeof child.ref === 'function') {
-                      child.ref(element);
-                    }
-                  },
-                })
-              ))
+        {!elementRef
+          ? React.Children.map(this.props.children, child =>
+              React.cloneElement(child, {
+                ref: element => {
+                  this.element = element;
+                  if (typeof child.ref === "function") {
+                    child.ref(element);
+                  }
+                }
+              })
             )
-            : (
-              children
-            )
-        }
+          : children}
       </div>
     );
   }
@@ -157,14 +145,14 @@ InputTrigger.propTypes = {
     keyCode: PropTypes.number,
     shiftKey: PropTypes.bool,
     ctrlKey: PropTypes.bool,
-    metaKey: PropTypes.bool,
+    metaKey: PropTypes.bool
   }),
   onStart: PropTypes.func,
   onCancel: PropTypes.func,
   onType: PropTypes.func,
   endTrigger: PropTypes.func,
   children: PropTypes.element.isRequired,
-  elementRef: PropTypes.element,
+  elementRef: PropTypes.element
 };
 
 InputTrigger.defaultProps = {
@@ -173,13 +161,13 @@ InputTrigger.defaultProps = {
     keyCode: null,
     shiftKey: false,
     ctrlKey: false,
-    metaKey: false,
+    metaKey: false
   },
   onStart: () => {},
   onCancel: () => {},
   onType: () => {},
   endTrigger: () => {},
-  elementRef: null,
+  elementRef: null
 };
 
 export default InputTrigger;
